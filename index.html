@@ -237,7 +237,6 @@
         }
         .modal-input:focus { border-color: var(--primary-pink); box-shadow: 0 0 10px var(--glow-purple); }
         
-        /* Tutorial Specific Styles */
         .tutorial-text {
             text-align: left;
             margin-bottom: 20px;
@@ -286,7 +285,12 @@
             align-self: start;
             position: relative;
             overflow: hidden;
+            max-height: 80vh;
+            overflow-y: auto;
         }
+        .control-panel::-webkit-scrollbar { width: 6px; }
+        .control-panel::-webkit-scrollbar-thumb { background: var(--primary-purple); border-radius: 4px; }
+
         .control-panel::before {
             content: '';
             position: absolute;
@@ -381,18 +385,20 @@
             transform: scale(1.15) rotate(5deg); 
         }
 
+        .mairie { background: linear-gradient(135deg, #FFD700, #FDB931); box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4); }
         .residence { background: linear-gradient(135deg, #60A5FA, #3B82F6); box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); }
         .grande-residence { background: linear-gradient(135deg, #34D399, #059669); box-shadow: 0 4px 15px rgba(5, 150, 105, 0.4); }
-        
+        .ecole { background: linear-gradient(135deg, #FCD34D, #F59E0B); box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4); }
         .grand-commerce { background: linear-gradient(135deg, #C084FC, #9333EA); box-shadow: 0 4px 15px rgba(147, 51, 234, 0.4); }
         .cinema { background: linear-gradient(135deg, #F472B6, #DB2777); box-shadow: 0 4px 15px rgba(219, 39, 119, 0.4); }
+        .musee { background: linear-gradient(135deg, #A78BFA, #7C3AED); box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4); }
         .bureau { background: linear-gradient(135deg, #94A3B8, #475569); box-shadow: 0 4px 15px rgba(71, 85, 105, 0.4); }
-
         .commerce { background: linear-gradient(135deg, #8B5CF6, #7C3AED); box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4); }
         .industrie { background: linear-gradient(135deg, #F59E0B, #D97706); box-shadow: 0 4px 15px rgba(217, 119, 6, 0.4); }
         .monument { background: linear-gradient(135deg, #FBBF24, #F59E0B); box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4); }
         .police { background: linear-gradient(135deg, #2563EB, #4F46E5); box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); }
         .pompier { background: linear-gradient(135deg, #DC2626, #F97316); box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4); }
+        .hopital { background: linear-gradient(135deg, #F87171, #EF4444); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4); }
         .parc { background: linear-gradient(135deg, #10B981, #059669); box-shadow: 0 4px 15px rgba(5, 150, 105, 0.4); }
         .route { background: linear-gradient(135deg, #6B7280, #4B5563); box-shadow: 0 4px 15px rgba(75, 85, 99, 0.4); }
         .demolir { background: linear-gradient(135deg, #F43F5E, #BE123C); box-shadow: 0 4px 15px rgba(244, 63, 94, 0.4); }
@@ -571,6 +577,12 @@
             box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4); 
         }
         
+        .action-btn.auto-active {
+            background: linear-gradient(135deg, #10B981, #059669);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
+            border: 2px solid #34D399;
+        }
+
         .notification { 
             position: fixed; 
             bottom: 30px; 
@@ -654,11 +666,9 @@
              <footer class="menu-copyright">© City Builder Simulator - XAYWOX</footer>
         </div>
         
-        <!-- Load Game Screen -->
         <div class="menu-screen" id="load-game-screen" style="display: none;">
             <h1 class="menu-title" style="font-size: 3rem;">Charger</h1>
             <div class="save-list-container" id="save-list">
-                <!-- Saves will be injected here -->
                 <div style="padding:20px; color: #94a3b8;">Aucune sauvegarde trouvée</div>
             </div>
             <div class="menu-options">
@@ -686,20 +696,25 @@
                         <div class="stat-card"><div class="stat-name">Revenu Net /J</div><div class="stat-value" id="net-income">0</div></div>
                     </div>
                     <div class="building-types">
+                        <h3 class="section-title">Administration</h3>
+                        <div class="building-option" data-type="mairie" id="mairie-option"><div class="building-icon mairie">🏛️</div><div class="building-info"><div class="building-name">Mairie</div><div class="building-cost" id="cost-mairie"></div></div></div>
+                        
                         <h3 class="section-title">Bâtiments</h3>
                         <div class="building-option selected" data-type="residence"><div class="building-icon residence">🏠</div><div class="building-info"><div class="building-name">Résidence</div><div class="building-cost" id="cost-residence"></div></div></div>
                         <div class="building-option hidden-building" data-type="grande-residence" id="large-residence-option"><div class="building-icon grande-residence">🏙️</div><div class="building-info"><div class="building-name">Grande Résidence</div><div class="building-cost" id="cost-grande-residence"></div></div></div>
                         <div class="building-option" data-type="commerce"><div class="building-icon commerce">🏪</div><div class="building-info"><div class="building-name">Commerce</div><div class="building-cost" id="cost-commerce"></div></div></div>
-                        
-                        <!-- Added hidden-building class and IDs -->
                         <div class="building-option hidden-building" data-type="grand-commerce" id="grand-commerce-option"><div class="building-icon grand-commerce">🏬</div><div class="building-info"><div class="building-name">Grand Commerce</div><div class="building-cost" id="cost-grand-commerce"></div></div></div>
                         <div class="building-option" data-type="bureau"><div class="building-icon bureau">🏢</div><div class="building-info"><div class="building-name">Bureaux</div><div class="building-cost" id="cost-bureau"></div></div></div>
                         <div class="building-option hidden-building" data-type="cinema" id="cinema-option"><div class="building-icon cinema">🎬</div><div class="building-info"><div class="building-name">Cinéma</div><div class="building-cost" id="cost-cinema"></div></div></div>
-                        
+                        <div class="building-option hidden-building" data-type="musee" id="musee-option"><div class="building-icon musee">🖼️</div><div class="building-info"><div class="building-name">Musée</div><div class="building-cost" id="cost-musee"></div></div></div>
                         <div class="building-option" data-type="industrie"><div class="building-icon industrie">🏭</div><div class="building-info"><div class="building-name">Industrie</div><div class="building-cost" id="cost-industrie"></div></div></div>
                         <div class="building-option hidden-building" data-type="monument" id="monument-option"><div class="building-icon monument">🗼</div><div class="building-info"><div class="building-name">Monument</div><div class="building-cost" id="cost-monument"></div></div></div>
+                        
+                        <h3 class="section-title">Services</h3>
                         <div class="building-option" data-type="police"><div class="building-icon police">🚓</div><div class="building-info"><div class="building-name">Poste de Police</div><div class="building-cost" id="cost-police"></div></div></div>
                         <div class="building-option" data-type="pompier"><div class="building-icon pompier">🚒</div><div class="building-info"><div class="building-name">Caserne de Pompier</div><div class="building-cost" id="cost-pompier"></div></div></div>
+                        <div class="building-option" data-type="hopital"><div class="building-icon hopital">🏥</div><div class="building-info"><div class="building-name">Hôpital</div><div class="building-cost" id="cost-hopital"></div></div></div>
+                        <div class="building-option" data-type="ecole"><div class="building-icon ecole">🏫</div><div class="building-info"><div class="building-name">École</div><div class="building-cost" id="cost-ecole"></div></div></div>
                         <div class="building-option" data-type="parc"><div class="building-icon parc">🌳</div><div class="building-info"><div class="building-name">Parc</div><div class="building-cost" id="cost-parc"></div></div></div>
                         <div class="building-option" data-type="route"><div class="building-icon route">🚧</div><div class="building-info"><div class="building-name">Route</div><div class="building-cost" id="cost-route"></div></div></div>
                     </div>
@@ -715,6 +730,7 @@
                             <button id="fullscreen-btn" class="action-btn">Full 📺</button>
                             <button id="save-btn-action" class="action-btn">💾</button>
                             <button id="buy-land-button" class="action-btn">🗺️ <span id="buy-land-text"></span></button>
+                            <button id="auto-turn" class="action-btn">⏩ Auto</button>
                             <button id="next-turn" class="action-btn">☀️ Jour Suivant</button>
                         </div>
                     </div>
@@ -724,7 +740,6 @@
         </div>
     </div>
     
-    <!-- Save Game Modal -->
     <div class="modal-overlay" id="save-modal">
         <div class="modal-content">
             <h2 class="section-title">Sauvegarder la Partie</h2>
@@ -736,23 +751,28 @@
         </div>
     </div>
 
-    <!-- Tutorial Modal -->
     <div class="modal-overlay" id="tutorial-modal">
         <div class="modal-content">
             <h2 class="section-title" style="font-size: 2rem;">Tutoriel & Aide</h2>
             <div class="tutorial-text">
+                <h3>🏛️ La Mairie</h3>
+                <ul>
+                    <li>⚠️ <strong>Important :</strong> Vous devez construire une <strong>Mairie</strong> avant toute chose. Sans administration, pas de ville !</li>
+                </ul>
+                
                 <h3>🏠 Les Bases</h3>
                 <ul>
                     <li><strong>Résidences :</strong> Attirent la population. Nécessitent des routes connectées au bord de la carte.</li>
                     <li><strong>Commerce & Industrie :</strong> Génèrent des revenus et fournissent des emplois.</li>
+                    <li>⚠️ <strong>Faillite Commerciale :</strong> Si vous n'avez pas assez d'habitants pour soutenir vos commerces, ils feront faillite et seront abandonnés !</li>
                     <li><strong>Routes :</strong> Indispensables pour relier les bâtiments au reste du monde (bords de la carte).</li>
                 </ul>
 
                 <h3>😊 Bonheur & Dangers</h3>
                 <ul>
-                    <li>Le <strong>bonheur</strong> dépend des parcs, de la criminalité, et des impôts.</li>
-                    <li>⚠️ <strong>Attention :</strong> Si le bonheur chute en dessous de <strong>20%</strong>, des <strong>émeutes</strong> éclatent ! Les habitants mettront le feu aux bâtiments et quitteront la ville.</li>
-                    <li><strong>Police & Pompiers :</strong> Protègent contre les braquages et les incendies.</li>
+                    <li>Le <strong>bonheur</strong> dépend des parcs, de la criminalité, de la santé, de l'éducation et des impôts.</li>
+                    <li>⚠️ <strong>Attention :</strong> Si le bonheur chute en dessous de <strong>20%</strong>, des <strong>émeutes</strong> éclatent !</li>
+                    <li><strong>Police, Pompiers & Hôpitaux :</strong> Protègent contre les braquages, les incendies et les maladies.</li>
                 </ul>
 
                 <h3>💰 Économie</h3>
@@ -760,12 +780,6 @@
                     <li>Gérez votre budget en ajustant les <strong>impôts</strong> (attention au bonheur !).</li>
                     <li>Construisez des commerces pour augmenter vos revenus quotidiens.</li>
                     <li>Attention aux coûts d'entretien de chaque bâtiment.</li>
-                </ul>
-
-                <h3>🏆 Objectifs</h3>
-                <ul>
-                    <li>Débloquez des bâtiments avancés (Monuments, Cinémas) en atteignant un niveau de bonheur élevé.</li>
-                    <li>Développez la plus grande mégalopole possible sans faire faillite !</li>
                 </ul>
             </div>
             <button class="menu-btn" id="close-tutorial-btn" style="padding: 10px 30px;">Compris !</button>
@@ -780,22 +794,27 @@
         const SAVES_KEY = 'cityBuilderMultiSaves';
         let gameState = {};
         let currentSaveName = null;
+        let autoTurnInterval = null;
 
         const defaultGameState = {
             gridColumns: INITIAL_GRID_COLUMNS, gridRows: 8, selectedTool: 'residence',
             budget: 12500, population: 0, netIncome: 0, maintenanceCost: 0, commercialIncome: 0, taxIncome: 0, taxHappinessPenalty: 0, happiness: 75, taxRate: 10,
             buildings: [], buildingPurchaseCount: {}, activeEvents: [], landCost: 5000,
             buildingTypes: {
+                mairie: { name: 'Mairie', baseCost: 1500, population: 0, income: 0, happiness: 10, icon: '🏛️', needsRoad: true, maintenanceCost: 100, isUnique: true },
                 residence: { name: 'Résidence', baseCost: 1000, population: 50, income: 0, happiness: 3, icon: '🏠', needsRoad: true, maintenanceCost: 50 },
                 'grande-residence': { name: 'Grande Résidence', baseCost: 3000, population: 200, income: 0, happiness: 5, icon: '🏙️', needsRoad: true, unlockHappiness: 80, maintenanceCost: 150 },
-                commerce: { name: 'Commerce', baseCost: 2000, population: 10, income: 100, happiness: 0, icon: '🏪', needsRoad: true, maintenanceCost: 75 },
-                'grand-commerce': { name: 'Grand Commerce', baseCost: 6000, population: 50, income: 450, happiness: 5, icon: '🏬', needsRoad: true, maintenanceCost: 250, unlockHappiness: 80 },
+                commerce: { name: 'Commerce', baseCost: 2000, population: 10, income: 100, happiness: 0, icon: '🏪', needsRoad: true, maintenanceCost: 75, requiredPop: 40 },
+                'grand-commerce': { name: 'Grand Commerce', baseCost: 6000, population: 50, income: 450, happiness: 5, icon: '🏬', needsRoad: true, maintenanceCost: 250, unlockHappiness: 80, requiredPop: 150 },
                 bureau: { name: 'Bureaux', baseCost: 4500, population: 150, income: 200, happiness: -2, icon: '🏢', needsRoad: true, maintenanceCost: 120 },
-                cinema: { name: 'Cinéma', baseCost: 5000, population: 20, income: 150, happiness: 15, icon: '🎬', needsRoad: true, maintenanceCost: 200, unlockHappiness: 85 },
+                cinema: { name: 'Cinéma', baseCost: 5000, population: 20, income: 150, happiness: 15, icon: '🎬', needsRoad: true, maintenanceCost: 200, unlockHappiness: 85, requiredPop: 100 },
+                musee: { name: 'Musée', baseCost: 12000, population: 0, income: 50, happiness: 20, icon: '🖼️', needsRoad: true, maintenanceCost: 400, unlockHappiness: 90 },
                 industrie: { name: 'Industrie', baseCost: 3000, population: 5, income: 200, happiness: -10, icon: '🏭', needsRoad: true, maintenanceCost: 100 },
                 monument: { name: 'Monument', baseCost: 10000, population: 0, income: 0, happiness: 10, icon: '🗼', needsRoad: false, adjacentHappinessBonus: 15, maintenanceCost: 500, unlockHappiness: 90 },
                 police: { name: 'Poste de Police', baseCost: 7000, icon: '🚓', needsRoad: true, maintenanceCost: 100 },
                 pompier: { name: 'Caserne de Pompier', baseCost: 7000, icon: '🚒', needsRoad: true, maintenanceCost: 100 },
+                hopital: { name: 'Hôpital', baseCost: 8000, icon: '🏥', needsRoad: true, maintenanceCost: 300, happiness: 10 },
+                ecole: { name: 'École', baseCost: 4000, icon: '🏫', needsRoad: true, maintenanceCost: 150, happiness: 5 },
                 parc: { name: 'Parc', baseCost: 500, population: 0, income: 0, happiness: 15, icon: '🌳', needsRoad: false, maintenanceCost: 25 },
                 route: { name: 'Route', baseCost: 100, icon: '🚧', maintenanceCost: 10 },
                 demolir: { name: 'Démolir', baseCost: 0, icon: '💣' }
@@ -820,6 +839,10 @@
             currentSaveName = null;
             showScreen('game-interface');
             initGameUI();
+            stopAutoTurn();
+            setTimeout(() => {
+                showNotification("Construisez une Mairie pour commencer !", "info");
+            }, 500);
         }
 
         function getAllSaves() {
@@ -849,12 +872,18 @@
             if (saves[name]) {
                 try {
                     gameState = saves[name].gameState;
-                    if(!gameState.buildingTypes['grand-commerce'].unlockHappiness) gameState.buildingTypes['grand-commerce'].unlockHappiness = 80;
-                    if(!gameState.buildingTypes['cinema'].unlockHappiness) gameState.buildingTypes['cinema'].unlockHappiness = 85;
+                    
+                    const defaults = JSON.parse(JSON.stringify(defaultGameState));
+                    for (let key in defaults.buildingTypes) {
+                        if (!gameState.buildingTypes[key]) {
+                            gameState.buildingTypes[key] = defaults.buildingTypes[key];
+                        }
+                    }
 
                     currentSaveName = name;
                     showScreen('game-interface');
                     initGameUI();
+                    stopAutoTurn();
                     showNotification('Partie chargée: ' + name, 'success');
                 } catch (e) {
                     console.error(e);
@@ -915,6 +944,7 @@
         }
         
         function gameOver() {
+            stopAutoTurn();
             showScreen('game-over-screen');
         }
 
@@ -989,7 +1019,6 @@
                     gameState.selectedTool = option.dataset.type;
                 });
                 
-                // Add hover tooltip for building options
                 option.addEventListener('mousemove', (e) => {
                     const type = option.dataset.type;
                     if (gameState.buildingTypes[type]) {
@@ -1000,6 +1029,7 @@
             });
 
             document.getElementById('next-turn').addEventListener('click', nextTurn);
+            document.getElementById('auto-turn').addEventListener('click', toggleAutoTurn);
             document.getElementById('buy-land-button').addEventListener('click', buyLand);
             document.getElementById('fullscreen-btn').addEventListener('click', toggleFullScreen);
 
@@ -1015,6 +1045,30 @@
             });
             const initialPercentage = (taxSlider.value / taxSlider.max) * 100;
             taxSlider.style.background = `linear-gradient(to right, var(--primary-blue) 0%, var(--primary-blue) ${initialPercentage}%, rgba(59, 130, 246, 0.2) ${initialPercentage}%, rgba(59, 130, 246, 0.2) 100%)`;
+        }
+
+        function toggleAutoTurn() {
+            const btn = document.getElementById('auto-turn');
+            if (autoTurnInterval) {
+                stopAutoTurn();
+            } else {
+                btn.classList.add('auto-active');
+                btn.innerHTML = '⏸️ Stop';
+                autoTurnInterval = setInterval(nextTurn, 2000);
+                showNotification("Mode Auto activé", "info");
+            }
+        }
+
+        function stopAutoTurn() {
+            const btn = document.getElementById('auto-turn');
+            if (autoTurnInterval) {
+                clearInterval(autoTurnInterval);
+                autoTurnInterval = null;
+            }
+            if (btn) {
+                btn.classList.remove('auto-active');
+                btn.innerHTML = '⏩ Auto';
+            }
         }
         
         function handleGridHover(e) {
@@ -1040,6 +1094,9 @@
         function showTypeTooltip(e, type) {
             const data = gameState.buildingTypes[type];
             let extraHTML = `<div class="tooltip-row"><span class="tooltip-label">Coût:</span> <span class="tooltip-value" style="color: #FBBF24">${data.baseCost}</span></div>`;
+            if (data.requiredPop) {
+                extraHTML += `<div class="tooltip-row"><span class="tooltip-label">Pop. requise:</span> <span class="tooltip-value">${data.requiredPop}</span></div>`;
+            }
             renderTooltip(e, data, extraHTML);
         }
 
@@ -1060,11 +1117,9 @@
             let left = e.pageX + padding;
             let top = e.pageY + padding;
             
-            // Adjust position to stay on screen
             if (left + tooltip.offsetWidth > window.innerWidth) {
                 left = e.pageX - tooltip.offsetWidth - padding;
             }
-            // Check bottom edge
             if (top + tooltip.offsetHeight > window.innerHeight) {
                 top = e.pageY - tooltip.offsetHeight - padding;
             }
@@ -1109,6 +1164,18 @@
                 if (existingBuilding) removeBuilding(existingBuilding);
                 return;
             }
+            
+            const hasMairie = gameState.buildings.some(b => b.type === 'mairie');
+            if (!hasMairie && gameState.selectedTool !== 'mairie') {
+                showNotification('Vous devez construire une Mairie d\'abord !', 'error');
+                return;
+            }
+
+            if (gameState.selectedTool === 'mairie' && hasMairie) {
+                showNotification('Une seule Mairie autorisée !', 'error');
+                return;
+            }
+
             if (existingBuilding) { showNotification('Case occupée !', 'error'); return; }
 
             const cost = getCurrentBuildingCost(gameState.selectedTool);
@@ -1275,10 +1342,9 @@
                 return true;
             });
 
-            // Random Events Logic
             if (Math.random() < 0.1) {
                 const type = Math.random() < 0.5 ? 'fire' : 'robbery';
-                const targets = gameState.buildings.filter(b => (type === 'fire' && ['residence', 'commerce', 'industrie', 'grand-commerce', 'bureau', 'cinema'].includes(b.type)) || (type === 'robbery' && ['commerce', 'grand-commerce', 'cinema'].includes(b.type)));
+                const targets = gameState.buildings.filter(b => (type === 'fire' && ['residence', 'commerce', 'industrie', 'grand-commerce', 'bureau', 'cinema', 'hopital', 'ecole', 'mairie', 'musee'].includes(b.type)) || (type === 'robbery' && ['commerce', 'grand-commerce', 'cinema'].includes(b.type)));
                 if (targets.length > 0) {
                     const target = targets[Math.floor(Math.random() * targets.length)];
                     if(!gameState.activeEvents.some(e => e.buildingIndex === target.index)) {
@@ -1288,34 +1354,51 @@
                 }
             }
 
-            // --- RIOT AND EXODUS LOGIC (LOW HAPPINESS) ---
             if (gameState.happiness < 20) {
-                // 30% chance of a riot fire per turn if unhappy
                 if (Math.random() < 0.3) {
                     const targets = gameState.buildings.filter(b => ['residence', 'commerce', 'industrie', 'grand-commerce'].includes(b.type));
                     if (targets.length > 0) {
                         const target = targets[Math.floor(Math.random() * targets.length)];
-                        // Start an immediate fire event
                         if(!gameState.activeEvents.some(e => e.buildingIndex === target.index)) {
-                            gameState.activeEvents.push({ type: 'fire', buildingIndex: target.index, turnsLeft: 2 }); // Faster fire
+                            gameState.activeEvents.push({ type: 'fire', buildingIndex: target.index, turnsLeft: 2 });
                             buildingsToUpdate.add(target);
                             showNotification("ÉMEUTE ! Les habitants mettent le feu !", "error");
                         }
                     }
                 }
 
-                // 30% chance of people leaving (Exodus) - destroying a residence
                 if (Math.random() < 0.3) {
                     const residences = gameState.buildings.filter(b => ['residence', 'grande-residence'].includes(b.type));
                     if (residences.length > 0) {
                         const target = residences[Math.floor(Math.random() * residences.length)];
-                        removeBuilding(target, true); // true = no refund
+                        removeBuilding(target, true);
                         showNotification("EXODE ! Les habitants fuient la ville !", "error");
                     }
                 }
             }
 
             return Array.from(buildingsToUpdate);
+        }
+
+        function checkCommerceBankruptcy(buildingsToUpdate) {
+            const commerceTypes = ['commerce', 'grand-commerce', 'cinema'];
+            const commerceBuildings = gameState.buildings.filter(b => commerceTypes.includes(b.type));
+            
+            if (commerceBuildings.length === 0) return;
+
+            commerceBuildings.forEach(b => {
+                const required = gameState.buildingTypes[b.type].requiredPop || 0;
+                if (gameState.population < required) {
+                    if (Math.random() < 0.1) {
+                        removeBuilding(b, true);
+                        showNotification("Faillite ! Un commerce ferme faute de clients.", "error");
+                    } else if (!b.isBankruptWarning) {
+                        b.isBankruptWarning = true;
+                    }
+                } else {
+                    b.isBankruptWarning = false;
+                }
+            });
         }
 
         function updateStatistics() {
@@ -1337,7 +1420,13 @@
 
                 if (b.isActive && data.population) totalPopulation += data.population;
                 
-                if (b.isActive && data.income) totalCommercialIncome += data.income;
+                if (b.isActive && data.income) {
+                    if (data.requiredPop && totalPopulation < data.requiredPop) {
+                       
+                    } else {
+                        totalCommercialIncome += data.income;
+                    }
+                }
 
                 if (data.maintenanceCost) totalMaintenance += data.maintenanceCost;
 
@@ -1366,6 +1455,8 @@
             
             const eventBuildingsToUpdate = handleEvents();
             
+            checkCommerceBankruptcy(eventBuildingsToUpdate);
+
             gameState.budget += gameState.netIncome;
             
             if(gameState.budget < 0) { gameOver(); return; }
@@ -1398,6 +1489,7 @@
             document.getElementById('monument-option').classList.toggle('hidden-building', gameState.happiness < gameState.buildingTypes.monument.unlockHappiness);
             document.getElementById('grand-commerce-option').classList.toggle('hidden-building', gameState.happiness < gameState.buildingTypes['grand-commerce'].unlockHappiness);
             document.getElementById('cinema-option').classList.toggle('hidden-building', gameState.happiness < gameState.buildingTypes.cinema.unlockHappiness);
+            document.getElementById('musee-option').classList.toggle('hidden-building', gameState.happiness < gameState.buildingTypes.musee.unlockHappiness);
         }
 
         function showNotification(message, type) {
@@ -1405,6 +1497,7 @@
             notification.textContent = message;
             if (type === 'error') notification.style.background = 'linear-gradient(135deg, #EF4444, #DC2626)';
             else if (type === 'success') notification.style.background = 'linear-gradient(135deg, #10B981, #059669)';
+            else if (type === 'info') notification.style.background = 'linear-gradient(135deg, #3B82F6, #2563EB)'; 
             else notification.style.background = 'linear-gradient(135deg, var(--primary-purple), var(--primary-pink))';
             notification.classList.add('show');
             setTimeout(() => notification.classList.remove('show'), 2000);
@@ -1416,4 +1509,4 @@
         window.deleteSave = deleteSave;
     </script>
 </body>
-</html>
+</html>    
