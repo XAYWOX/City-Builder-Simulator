@@ -9,8 +9,10 @@
             --primary-purple: #a855f7;
             --primary-blue: #3b82f6;
             --primary-pink: #ec4899;
+            --primary-yellow: #fbbf24;
             --glow-purple: rgba(168, 85, 247, 0.5);
             --glow-blue: rgba(59, 130, 246, 0.4);
+            --glow-yellow: rgba(251, 191, 36, 0.4);
             --background: #0a0e1a;
             --background-gradient: #1a1f35;
             --card-bg: rgba(30, 41, 59, 0.8);
@@ -18,6 +20,7 @@
             --text-light: #f1f5f9;
             --text-dim: #94a3b8;
             --red-alert: #f43f5e;
+            --success-green: #10b981;
         }
 
         @keyframes fadeIn { 
@@ -40,9 +43,10 @@
             0% { background-position: -100% 0; }
             100% { background-position: 200% 0; }
         }
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+        @keyframes victory-spin {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.5); }
+            100% { transform: rotate(360deg) scale(1); }
         }
 
         * { 
@@ -273,73 +277,62 @@
         }
         
         .game-container { display: grid; grid-template-columns: 1fr; gap: 25px; }
-        @media (min-width: 1024px) { .game-container { grid-template-columns: 370px 1fr; } }
+        @media (min-width: 1200px) { .game-container { grid-template-columns: 320px 1fr 320px; } }
+        @media (min-width: 1024px) and (max-width: 1199px) { .game-container { grid-template-columns: 300px 1fr; } }
 
-        .control-panel { 
+        .panel-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .control-panel, .economy-panel, .quest-panel { 
             background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.9)); 
             backdrop-filter: blur(20px); 
             border-radius: 20px; 
             padding: 25px; 
             border: 2px solid var(--card-border); 
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px var(--glow-purple);
-            align-self: start;
             position: relative;
             overflow: hidden;
+        }
+
+        .control-panel {
             max-height: 80vh;
             overflow-y: auto;
         }
+        
         .control-panel::-webkit-scrollbar { width: 6px; }
         .control-panel::-webkit-scrollbar-thumb { background: var(--primary-purple); border-radius: 4px; }
 
-        .control-panel::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.1), transparent);
-            animation: shimmer 3s ease-in-out infinite;
-        }
         .stats { 
             display: grid; 
-            grid-template-columns: 1fr 1fr; 
+            grid-template-columns: 1fr; 
             gap: 15px; 
-            margin-bottom: 30px; 
+            margin-bottom: 10px; 
         }
         .stat-card { 
             background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(59, 130, 246, 0.1)); 
             border-radius: 15px; 
-            padding: 18px; 
+            padding: 15px; 
             text-align: center; 
             border: 2px solid rgba(168, 85, 247, 0.3); 
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-        .stat-card:hover { 
-            transform: translateY(-5px) scale(1.03); 
-            box-shadow: 0 8px 30px var(--glow-purple); 
-            border-color: var(--primary-purple);
         }
         .stat-value { 
-            font-size: 1.6rem; 
+            font-size: 1.4rem; 
             font-weight: 900; 
-            background: linear-gradient(135deg, var(--primary-purple), var(--primary-pink));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-top: 8px; 
-            text-shadow: 0 0 10px var(--glow-purple); 
-            animation: fadeIn 0.5s; 
+            color: var(--text-light);
+            margin-top: 5px; 
         }
         .section-title { 
-            font-size: 1.3rem; 
-            margin-bottom: 18px; 
+            font-size: 1.2rem; 
+            margin-bottom: 15px; 
             background: linear-gradient(90deg, var(--primary-blue), var(--primary-purple));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            padding-bottom: 8px; 
+            padding-bottom: 5px; 
             border-bottom: 2px solid var(--card-border); 
             font-weight: 700;
         }
@@ -347,88 +340,73 @@
         .building-option { 
             display: flex; 
             align-items: center; 
-            gap: 15px; 
-            padding: 15px; 
-            margin-bottom: 12px; 
+            gap: 12px; 
+            padding: 12px; 
+            margin-bottom: 8px; 
             background: rgba(255, 255, 255, 0.05); 
             border-radius: 12px; 
             cursor: pointer; 
             transition: all 0.3s ease; 
             border: 2px solid transparent; 
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         }
         .building-option:hover { 
             background: rgba(255, 255, 255, 0.12); 
             border-color: var(--primary-purple);
             transform: translateX(5px);
-            box-shadow: 0 4px 20px var(--glow-purple);
         }
         .building-option.selected { 
             background: linear-gradient(135deg, rgba(168, 85, 247, 0.4), rgba(236, 72, 153, 0.3)); 
             border-color: var(--primary-pink); 
-            box-shadow: 0 6px 25px var(--glow-purple), inset 0 0 20px rgba(168, 85, 247, 0.2); 
         }
         .hidden-building { display: none !important; }
         .building-icon { 
-            width: 45px; 
-            height: 45px; 
-            border-radius: 10px; 
+            width: 40px; 
+            height: 40px; 
+            border-radius: 8px; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            font-size: 1.8rem; 
+            font-size: 1.5rem; 
             flex-shrink: 0; 
-            transition: transform 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-        .building-option:hover .building-icon { 
-            transform: scale(1.15) rotate(5deg); 
         }
 
-        .mairie { background: linear-gradient(135deg, #FFD700, #FDB931); box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4); }
-        .residence { background: linear-gradient(135deg, #60A5FA, #3B82F6); box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); }
-        .grande-residence { background: linear-gradient(135deg, #34D399, #059669); box-shadow: 0 4px 15px rgba(5, 150, 105, 0.4); }
-        .ecole { background: linear-gradient(135deg, #FCD34D, #F59E0B); box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4); }
-        .grand-commerce { background: linear-gradient(135deg, #C084FC, #9333EA); box-shadow: 0 4px 15px rgba(147, 51, 234, 0.4); }
-        .cinema { background: linear-gradient(135deg, #F472B6, #DB2777); box-shadow: 0 4px 15px rgba(219, 39, 119, 0.4); }
-        .musee { background: linear-gradient(135deg, #A78BFA, #7C3AED); box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4); }
-        .bureau { background: linear-gradient(135deg, #94A3B8, #475569); box-shadow: 0 4px 15px rgba(71, 85, 105, 0.4); }
-        .commerce { background: linear-gradient(135deg, #8B5CF6, #7C3AED); box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4); }
-        .industrie { background: linear-gradient(135deg, #F59E0B, #D97706); box-shadow: 0 4px 15px rgba(217, 119, 6, 0.4); }
-        .monument { background: linear-gradient(135deg, #FBBF24, #F59E0B); box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4); }
-        .police { background: linear-gradient(135deg, #2563EB, #4F46E5); box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); }
-        .pompier { background: linear-gradient(135deg, #DC2626, #F97316); box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4); }
-        .hopital { background: linear-gradient(135deg, #F87171, #EF4444); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4); }
-        .parc { background: linear-gradient(135deg, #10B981, #059669); box-shadow: 0 4px 15px rgba(5, 150, 105, 0.4); }
-        .route { background: linear-gradient(135deg, #6B7280, #4B5563); box-shadow: 0 4px 15px rgba(75, 85, 99, 0.4); }
-        .demolir { background: linear-gradient(135deg, #F43F5E, #BE123C); box-shadow: 0 4px 15px rgba(244, 63, 94, 0.4); }
+        .mairie { background: linear-gradient(135deg, #FFD700, #FDB931); }
+        .residence { background: linear-gradient(135deg, #60A5FA, #3B82F6); }
+        .grande-residence { background: linear-gradient(135deg, #34D399, #059669); }
+        .ecole { background: linear-gradient(135deg, #FCD34D, #F59E0B); }
+        .grand-commerce { background: linear-gradient(135deg, #C084FC, #9333EA); }
+        .cinema { background: linear-gradient(135deg, #F472B6, #DB2777); }
+        .musee { background: linear-gradient(135deg, #A78BFA, #7C3AED); }
+        .bureau { background: linear-gradient(135deg, #94A3B8, #475569); }
+        .commerce { background: linear-gradient(135deg, #8B5CF6, #7C3AED); }
+        .industrie { background: linear-gradient(135deg, #F59E0B, #D97706); }
+        .monument { background: linear-gradient(135deg, #FBBF24, #F59E0B); }
+        .police { background: linear-gradient(135deg, #2563EB, #4F46E5); }
+        .pompier { background: linear-gradient(135deg, #DC2626, #F97316); }
+        .hopital { background: linear-gradient(135deg, #F87171, #EF4444); }
+        .parc { background: linear-gradient(135deg, #10B981, #059669); }
+        .route { background: linear-gradient(135deg, #6B7280, #4B5563); }
+        .demolir { background: linear-gradient(135deg, #F43F5E, #BE123C); }
+        .move { background: linear-gradient(135deg, #38bdf8, #0ea5e9); }
 
         .slider { 
             width: 100%; 
             -webkit-appearance: none; 
-            background: linear-gradient(to right, var(--primary-blue) 0%, var(--primary-blue) 10%, rgba(59, 130, 246, 0.2) 10%, rgba(59, 130, 246, 0.2) 100%);
-            height: 12px; 
-            border-radius: 6px; 
+            background: var(--card-bg);
+            height: 10px; 
+            border-radius: 5px; 
             outline: none; 
-            border: 2px solid var(--primary-blue);
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3);
+            border: 1px solid var(--primary-blue);
+            margin-top: 10px;
         }
         .slider::-webkit-slider-thumb { 
             -webkit-appearance: none; 
             appearance: none; 
-            width: 24px; 
-            height: 24px; 
-            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            width: 20px; 
+            height: 20px; 
+            background: var(--primary-blue);
             cursor: pointer; 
             border-radius: 50%; 
-            box-shadow: 0 0 15px var(--glow-blue), 0 4px 10px rgba(0, 0, 0, 0.3);
-            transition: all 0.2s ease;
-        }
-        .slider::-webkit-slider-thumb:hover { 
-            background: linear-gradient(135deg, var(--primary-pink), var(--primary-purple)); 
-            transform: scale(1.2);
-            box-shadow: 0 0 20px var(--glow-purple);
         }
 
         .game-board-container { 
@@ -444,220 +422,155 @@
         .city-grid { 
             display: grid; 
             grid-template-columns: repeat(var(--grid-columns, 8), 1fr); 
-            gap: 10px; 
+            gap: 8px; 
             margin-bottom: 25px; 
             padding: 15px;
             background: rgba(0, 0, 0, 0.2);
             border-radius: 15px;
+            overflow: auto;
         }
         .grid-cell { 
             aspect-ratio: 1; 
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(168, 85, 247, 0.05)); 
-            border-radius: 10px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            cursor: pointer; 
-            transition: all 0.3s ease; 
-            border: 2px solid rgba(168, 85, 247, 0.2); 
-            position: relative; 
-            overflow: hidden;
-            box-shadow: inset 0 0 10px rgba(59, 130, 246, 0.1);
-        }
-
-        .grid-cell:hover { 
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(168, 85, 247, 0.15)); 
-            transform: scale(1.08); 
-            z-index: 10; 
-            box-shadow: 0 0 25px var(--glow-purple), inset 0 0 15px rgba(168, 85, 247, 0.2); 
-            border-color: var(--primary-purple);
-        }
-        .building { 
-            width: 85%; 
-            height: 85%; 
+            background: rgba(255, 255, 255, 0.03); 
             border-radius: 8px; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            color: white; 
-            font-size: 1.8rem; 
+            cursor: pointer; 
+            border: 1px solid rgba(255, 255, 255, 0.05); 
             position: relative; 
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), inset 0 2px 5px rgba(255, 255, 255, 0.2); 
-            transition: all 0.3s ease; 
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            z-index: 2;
         }
-        .grid-cell:hover .building { 
-            transform: scale(1.15) rotate(3deg); 
+
+        .grid-cell:hover { 
+            background: rgba(255, 255, 255, 0.1); 
+            border-color: var(--primary-purple);
         }
-        .building.inactive { 
-            opacity: 0.4; 
-            filter: grayscale(70%) brightness(0.7); 
-            border-color: var(--red-alert); 
-            box-shadow: 0 0 15px rgba(244, 63, 94, 0.5);
+        .grid-cell.move-highlight {
+            border: 2px dashed var(--primary-yellow);
+            background: rgba(251, 191, 36, 0.1);
         }
-        .event-overlay { 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            font-size: 2.5rem; 
+        .building { 
+            width: 90%; 
+            height: 90%; 
+            border-radius: 6px; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            border-radius: 10px; 
-            animation: pulse-alert 1.5s infinite; 
-            pointer-events: none;
+            font-size: 1.5rem; 
+            position: relative; 
+            z-index: 2;
+        }
+        .building.inactive { 
+            opacity: 0.5; 
+            filter: grayscale(80%); 
+        }
+        .event-overlay { 
+            position: absolute; 
+            top: 0; left: 0; width: 100%; height: 100%; 
+            font-size: 2rem; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
             z-index: 3;
+            animation: pulse-alert 1.5s infinite;
         }
 
         .game-info { 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            padding: 15px 20px; 
-            background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.2)); 
+            padding: 15px; 
+            background: rgba(0, 0, 0, 0.3); 
             border-radius: 15px; 
-            margin-top: 20px;
-            border: 2px solid var(--card-border);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            margin-top: auto;
         }
-        .happiness-meter { display: flex; align-items: center; gap: 12px; }
-        #happiness-icon { 
-            font-size: 2.5rem; 
-            transition: all 0.5s ease; 
-            filter: drop-shadow(0 0 10px currentColor);
-        }
-        #happiness-value { 
-            font-size: 1.4rem; 
-            font-weight: 900; 
-            text-shadow: 0 0 10px var(--glow-purple); 
-        }
-        .game-actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: flex-end;}
+        .meters-container { display: flex; gap: 15px; }
+        .meter { display: flex; align-items: center; gap: 8px; }
+        .meter-icon { font-size: 1.8rem; }
+        .meter-value { font-size: 1.2rem; font-weight: 700; }
+        #happiness-icon { color: var(--primary-yellow); }
+        #learning-icon { color: var(--primary-blue); }
+
+        .game-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end;}
         .action-btn { 
-            background: linear-gradient(135deg, var(--primary-purple), var(--primary-pink)); 
+            background: var(--primary-purple); 
             color: white; 
             border: none; 
-            padding: 12px 22px; 
-            border-radius: 12px; 
+            padding: 10px 18px; 
+            border-radius: 10px; 
             cursor: pointer; 
             font-weight: 700; 
-            font-size: 1.05rem;
-            transition: all 0.3s ease; 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
-            box-shadow: 0 6px 20px rgba(168, 85, 247, 0.4), inset 0 -3px 0 rgba(0, 0, 0, 0.2);
-            position: relative;
-            overflow: hidden;
+            transition: all 0.2s;
         }
-        .action-btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.4s ease, height 0.4s ease;
-        }
-        .action-btn:hover::before {
-            width: 300px;
-            height: 300px;
-        }
-        .action-btn:hover { 
-            transform: translateY(-3px); 
-            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.6), 0 0 20px var(--glow-purple); 
-        }
-        .action-btn:active { 
-            transform: translateY(0px); 
-            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4); 
-        }
-        
-        .action-btn.auto-active {
-            background: linear-gradient(135deg, #10B981, #059669);
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
-            border: 2px solid #34D399;
-        }
+        .action-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+        .action-btn.auto-active { background: var(--success-green); }
 
         .notification { 
             position: fixed; 
             bottom: 30px; 
             left: 50%; 
             transform: translateX(-50%); 
-            padding: 18px 28px; 
-            background: linear-gradient(135deg, var(--primary-purple), var(--primary-pink)); 
+            padding: 15px 25px; 
+            background: var(--primary-purple); 
             color: white; 
-            border-radius: 15px; 
-            box-shadow: 0 8px 30px rgba(168, 85, 247, 0.5); 
-            transition: all 0.4s ease; 
+            border-radius: 12px; 
             z-index: 1000; 
             opacity: 0;
             font-weight: 600;
-            font-size: 1.1rem;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            pointer-events: none;
+            transition: opacity 0.3s;
         }
-        .notification.show { 
-            opacity: 1; 
-            transform: translate(-50%, -15px); 
-        }
+        .notification.show { opacity: 1; }
         
-        .copyright { 
-            margin-top: auto; 
-            padding-top: 25px; 
-            text-align: center; 
-            color: var(--text-dim); 
-            font-size: 0.95rem; 
-            margin-bottom: 10px; 
-        }
-        .menu-copyright { 
-            position: absolute; 
-            bottom: 40px; 
-            color: var(--text-dim); 
-            font-size: 0.95rem; 
-            z-index: 20; 
-        }
+        .copyright { text-align: center; color: var(--text-dim); padding-top: 20px; font-size: 0.8rem; }
+        .menu-copyright { position: absolute; bottom: 20px; color: var(--text-dim); }
         
         .game-tooltip {
             position: absolute;
             background: rgba(15, 23, 42, 0.95);
             border: 1px solid var(--primary-purple);
-            padding: 12px;
-            border-radius: 12px;
+            padding: 15px;
+            border-radius: 10px;
             pointer-events: none;
             z-index: 2000;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
             display: none;
-            min-width: 180px;
+            min-width: 200px;
             color: var(--text-light);
-            font-size: 0.95rem;
-            transition: opacity 0.1s ease;
         }
-        .tooltip-header {
-            font-weight: 800;
-            color: var(--primary-pink);
-            margin-bottom: 8px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding-bottom: 5px;
-            font-size: 1.1rem;
-        }
-        .tooltip-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 4px;
-        }
+        .tooltip-header { font-weight: 800; color: var(--primary-pink); margin-bottom: 10px; font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; }
+        .tooltip-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
         .tooltip-label { color: var(--text-dim); }
-        .tooltip-value { font-weight: 700; color: var(--text-light); }
+        .tooltip-value { font-weight: 700; }
+
+        .win-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); display: none;
+            flex-direction: column; align-items: center; justify-content: center;
+            z-index: 3000; backdrop-filter: blur(10px); color: white;
+        }
+
+        /* Quest Panel */
+        .quest-panel {
+            padding: 20px;
+            color: var(--text-light);
+            text-align: left;
+        }
+        .quest-npc {
+            width: 60px; height: 60px; background: var(--primary-blue);
+            border-radius: 50%; margin: 0 auto 10px; display: flex;
+            align-items: center; justify-content: center; font-size: 2rem;
+            border: 2px solid white;
+        }
+        .quest-title { font-weight: bold; color: var(--primary-yellow); margin-bottom: 5px; }
+        .quest-desc { font-size: 0.95rem; margin-bottom: 10px; color: #ddd; }
+        .quest-reward { font-size: 0.9rem; color: var(--success-green); font-weight: bold; }
+
     </style>
 </head>
 <body>
     <div id="game-wrapper">
         <div class="menu-screen" id="main-menu">
-            <h1 class="menu-title">City Builder Simulator</h1>
+            <h1 class="menu-title">City Builder Simulator 2.2</h1>
             <div class="menu-options">
                 <button class="menu-btn" id="new-game-btn">Nouvelle Partie</button>
                 <button class="menu-btn" id="load-menu-btn">Charger une Partie</button>
@@ -666,74 +579,113 @@
              <footer class="menu-copyright">© City Builder Simulator - XAYWOX</footer>
         </div>
         
+        <div class="menu-screen" id="difficulty-screen" style="display: none;">
+            <h1 class="menu-title" style="font-size: 2.5rem;">Difficulté</h1>
+            <div class="menu-options">
+                <button class="menu-btn" onclick="setDifficulty('easy')">🟢 Facile (50k, Calme)</button>
+                <button class="menu-btn" onclick="setDifficulty('normal')">🟠 Normal (12k, Standard)</button>
+            </div>
+        </div>
+
         <div class="menu-screen" id="load-game-screen" style="display: none;">
             <h1 class="menu-title" style="font-size: 3rem;">Charger</h1>
-            <div class="save-list-container" id="save-list">
-                <div style="padding:20px; color: #94a3b8;">Aucune sauvegarde trouvée</div>
-            </div>
+            <div class="save-list-container" id="save-list"></div>
             <div class="menu-options">
                <button class="menu-btn" id="back-to-menu-btn">Retour</button>
             </div>
        </div>
     
         <div class="menu-screen" id="game-over-screen" style="display: none;">
-             <h1 class="menu-title" style="color: var(--red-alert);">Game Over</h1>
-             <p style="font-size: 1.2rem; margin-bottom: 30px;">Votre ville a fait faillite !</p>
+             <h1 class="menu-title" style="color: var(--red-alert);">Faillite !</h1>
+             <p style="font-size: 1.2rem; margin-bottom: 30px;">Votre ville n'a plus d'argent.</p>
              <div class="menu-options">
                 <button class="menu-btn" id="restart-game-btn">Recommencer</button>
              </div>
-             <footer class="menu-copyright">© City Builder Simulator - XAYWOX</footer>
         </div>
+
+        <div class="win-screen" id="win-screen">
+            <div style="font-size: 5rem; margin-bottom: 20px;">🏆</div>
+            <h1 style="font-size: 3rem; color: var(--primary-yellow);">Victoire !</h1>
+            <p>Votre ville est une utopie parfaite !</p>
+            <div class="menu-options" style="margin-top: 30px;">
+               <button class="menu-btn" id="continue-game-btn">Continuer</button>
+               <button class="menu-btn" onclick="showScreen('main-menu')">Menu</button>
+            </div>
+       </div>
     
         <div class="container" id="game-interface">
             <header><h1>City Builder Simulator</h1></header>
             <div class="game-container">
-                <div class="control-panel">
-                    <div class="stats">
-                        <div class="stat-card"><div class="stat-name">Population</div><div class="stat-value" id="population">0</div></div>
-                        <div class="stat-card"><div class="stat-name">Budget</div><div class="stat-value" id="budget">10,000</div></div>
-                        <div class="stat-card"><div class="stat-name">Revenu Impôts /J</div><div class="stat-value" id="tax-income">0</div></div>
-                        <div class="stat-card"><div class="stat-name">Revenu Net /J</div><div class="stat-value" id="net-income">0</div></div>
+                <div class="panel-column">
+                    <div class="economy-panel">
+                        <h3 class="section-title">Gestion & Économie</h3>
+                        <div class="stats">
+                            <div class="stat-card"><div class="stat-name">Budget</div><div class="stat-value" id="budget">0</div></div>
+                            <div class="stat-card"><div class="stat-name">Population</div><div class="stat-value" id="population">0</div></div>
+                            <div class="stat-card"><div class="stat-name">Revenus Net /J</div><div class="stat-value" id="net-income">0</div></div>
+                        </div>
+                        <div class="tax-controls">
+                            <label for="tax-slider">Impôts: <span id="tax-rate-display">10%</span></label>
+                            <input type="range" min="0" max="100" value="10" class="slider" id="tax-slider">
+                        </div>
                     </div>
-                    <div class="building-types">
-                        <h3 class="section-title">Administration</h3>
-                        <div class="building-option" data-type="mairie" id="mairie-option"><div class="building-icon mairie">🏛️</div><div class="building-info"><div class="building-name">Mairie</div><div class="building-cost" id="cost-mairie"></div></div></div>
-                        
-                        <h3 class="section-title">Bâtiments</h3>
-                        <div class="building-option selected" data-type="residence"><div class="building-icon residence">🏠</div><div class="building-info"><div class="building-name">Résidence</div><div class="building-cost" id="cost-residence"></div></div></div>
-                        <div class="building-option hidden-building" data-type="grande-residence" id="large-residence-option"><div class="building-icon grande-residence">🏙️</div><div class="building-info"><div class="building-name">Grande Résidence</div><div class="building-cost" id="cost-grande-residence"></div></div></div>
-                        <div class="building-option" data-type="commerce"><div class="building-icon commerce">🏪</div><div class="building-info"><div class="building-name">Commerce</div><div class="building-cost" id="cost-commerce"></div></div></div>
-                        <div class="building-option hidden-building" data-type="grand-commerce" id="grand-commerce-option"><div class="building-icon grand-commerce">🏬</div><div class="building-info"><div class="building-name">Grand Commerce</div><div class="building-cost" id="cost-grand-commerce"></div></div></div>
-                        <div class="building-option" data-type="bureau"><div class="building-icon bureau">🏢</div><div class="building-info"><div class="building-name">Bureaux</div><div class="building-cost" id="cost-bureau"></div></div></div>
-                        <div class="building-option hidden-building" data-type="cinema" id="cinema-option"><div class="building-icon cinema">🎬</div><div class="building-info"><div class="building-name">Cinéma</div><div class="building-cost" id="cost-cinema"></div></div></div>
-                        <div class="building-option hidden-building" data-type="musee" id="musee-option"><div class="building-icon musee">🖼️</div><div class="building-info"><div class="building-name">Musée</div><div class="building-cost" id="cost-musee"></div></div></div>
-                        <div class="building-option" data-type="industrie"><div class="building-icon industrie">🏭</div><div class="building-info"><div class="building-name">Industrie</div><div class="building-cost" id="cost-industrie"></div></div></div>
-                        <div class="building-option hidden-building" data-type="monument" id="monument-option"><div class="building-icon monument">🗼</div><div class="building-info"><div class="building-name">Monument</div><div class="building-cost" id="cost-monument"></div></div></div>
-                        
-                        <h3 class="section-title">Services</h3>
-                        <div class="building-option" data-type="police"><div class="building-icon police">🚓</div><div class="building-info"><div class="building-name">Poste de Police</div><div class="building-cost" id="cost-police"></div></div></div>
-                        <div class="building-option" data-type="pompier"><div class="building-icon pompier">🚒</div><div class="building-info"><div class="building-name">Caserne de Pompier</div><div class="building-cost" id="cost-pompier"></div></div></div>
-                        <div class="building-option" data-type="hopital"><div class="building-icon hopital">🏥</div><div class="building-info"><div class="building-name">Hôpital</div><div class="building-cost" id="cost-hopital"></div></div></div>
-                        <div class="building-option" data-type="ecole"><div class="building-icon ecole">🏫</div><div class="building-info"><div class="building-name">École</div><div class="building-cost" id="cost-ecole"></div></div></div>
-                        <div class="building-option" data-type="parc"><div class="building-icon parc">🌳</div><div class="building-info"><div class="building-name">Parc</div><div class="building-cost" id="cost-parc"></div></div></div>
-                        <div class="building-option" data-type="route"><div class="building-icon route">🚧</div><div class="building-info"><div class="building-name">Route</div><div class="building-cost" id="cost-route"></div></div></div>
+                    <div class="quest-panel">
+                        <div class="quest-npc">🤵</div>
+                        <div class="quest-title">Conseiller</div>
+                        <div id="quest-display">
+                            <div class="quest-desc">Aucune quête active.</div>
+                        </div>
                     </div>
-                     <div class="utility-tools"><h3 class="section-title">Utilitaires</h3><div class="building-option" data-type="demolir"><div class="building-icon demolir">💣</div><div class="building-info"><div class="building-name">Démolir</div><div class="building-cost" id="cost-demolir"></div></div></div></div>
-                    <div class="tax-controls"><h3 class="section-title">Impôts</h3><label for="tax-slider">Taux d'imposition: <span id="tax-rate-display">10%</span></label><input type="range" min="0" max="100" value="10" class="slider" id="tax-slider"></div>
                 </div>
+
                 <div class="game-board-container">
                     <div class="city-grid" id="city-grid"></div>
                     <div class="game-info">
-                        <div class="happiness-meter"><span id="happiness-icon">😊</span><span id="happiness-value">75%</span></div>
+                        <div class="meters-container">
+                            <div class="meter"><span id="happiness-icon" class="meter-icon">😊</span><span id="happiness-value" class="meter-value">75%</span></div>
+                            <div class="meter"><span id="learning-icon" class="meter-icon">🎓</span><span id="learning-value" class="meter-value">0%</span></div>
+                        </div>
                         <div class="game-actions">
-                            <button id="help-btn" class="action-btn">❓</button>
-                            <button id="fullscreen-btn" class="action-btn">Full 📺</button>
+                            <button id="help-btn" class="action-btn">❓ Aide</button>
+                            <button id="fullscreen-btn" class="action-btn">📺</button>
                             <button id="save-btn-action" class="action-btn">💾</button>
-                            <button id="buy-land-button" class="action-btn">🗺️ <span id="buy-land-text"></span></button>
+                            <button id="buy-land-button" class="action-btn">🗺️ Terrain</button>
                             <button id="auto-turn" class="action-btn">⏩ Auto</button>
                             <button id="next-turn" class="action-btn">☀️ Jour Suivant</button>
                         </div>
                     </div>
+                </div>
+
+                <div class="control-panel">
+                    <h3 class="section-title">Administration</h3>
+                    <div class="building-option" data-type="mairie"><div class="building-icon mairie">🏛️</div><div class="building-name">Mairie</div></div>
+                    
+                    <h3 class="section-title">Logement</h3>
+                    <div class="building-option selected" data-type="residence"><div class="building-icon residence">🏠</div><div class="building-name">Résidence</div></div>
+                    <div class="building-option hidden-building" data-type="grande-residence" id="large-residence-option"><div class="building-icon grande-residence">🏙️</div><div class="building-name">Grande Résidence</div></div>
+                    
+                    <h3 class="section-title">Commerce & Travail</h3>
+                    <div class="building-option" data-type="commerce"><div class="building-icon commerce">🏪</div><div class="building-name">Commerce</div></div>
+                    <div class="building-option" data-type="bureau"><div class="building-icon bureau">🏢</div><div class="building-name">Bureaux</div></div>
+                    <div class="building-option" data-type="industrie"><div class="building-icon industrie">🏭</div><div class="building-name">Industrie</div></div>
+                    <div class="building-option hidden-building" data-type="grand-commerce" id="grand-commerce-option"><div class="building-icon grand-commerce">🏬</div><div class="building-name">Grand Commerce</div></div>
+                    
+                    <h3 class="section-title">Loisirs & Culture</h3>
+                    <div class="building-option" data-type="parc"><div class="building-icon parc">🌳</div><div class="building-name">Parc</div></div>
+                    <div class="building-option hidden-building" data-type="cinema" id="cinema-option"><div class="building-icon cinema">🎬</div><div class="building-name">Cinéma</div></div>
+                    <div class="building-option hidden-building" data-type="musee" id="musee-option"><div class="building-icon musee">🖼️</div><div class="building-name">Musée</div></div>
+                    <div class="building-option hidden-building" data-type="monument" id="monument-option"><div class="building-icon monument">🗼</div><div class="building-name">Monument</div></div>
+
+                    <h3 class="section-title">Services Publics</h3>
+                    <div class="building-option" data-type="route"><div class="building-icon route">🚧</div><div class="building-name">Route</div></div>
+                    <div class="building-option" data-type="ecole"><div class="building-icon ecole">🏫</div><div class="building-name">École</div></div>
+                    <div class="building-option" data-type="police"><div class="building-icon police">🚓</div><div class="building-name">Police</div></div>
+                    <div class="building-option" data-type="pompier"><div class="building-icon pompier">🚒</div><div class="building-name">Pompiers</div></div>
+                    <div class="building-option" data-type="hopital"><div class="building-icon hopital">🏥</div><div class="building-name">Hôpital</div></div>
+                    
+                    <h3 class="section-title">Outils</h3>
+                    <div class="building-option" data-type="move"><div class="building-icon move">✋</div><div class="building-name">Déplacer</div></div>
+                    <div class="building-option" data-type="demolir"><div class="building-icon demolir">💣</div><div class="building-name">Démolir</div></div>
                 </div>
             </div>
             <footer class="copyright">© City Builder Simulator - XAYWOX</footer>
@@ -742,47 +694,44 @@
     
     <div class="modal-overlay" id="save-modal">
         <div class="modal-content">
-            <h2 class="section-title">Sauvegarder la Partie</h2>
+            <h2 class="section-title">Sauvegarder</h2>
             <input type="text" id="save-name-input" class="modal-input" placeholder="Nom de la sauvegarde...">
             <div style="display: flex; gap: 10px; justify-content: center;">
-                <button class="menu-btn" id="confirm-save-btn" style="padding: 10px 20px; font-size: 1rem;">Sauvegarder</button>
-                <button class="menu-btn" id="cancel-save-btn" style="padding: 10px 20px; font-size: 1rem; border-color: var(--red-alert);">Annuler</button>
+                <button class="menu-btn" id="confirm-save-btn">Sauvegarder</button>
+                <button class="menu-btn" id="cancel-save-btn" style="border-color: var(--red-alert);">Annuler</button>
             </div>
         </div>
     </div>
 
     <div class="modal-overlay" id="tutorial-modal">
-        <div class="modal-content">
-            <h2 class="section-title" style="font-size: 2rem;">Tutoriel & Aide</h2>
+        <div class="modal-content" style="text-align: left; max-width: 700px;">
+            <h2 class="section-title" style="text-align: center;">Guide du Maire</h2>
             <div class="tutorial-text">
-                <h3>🏛️ La Mairie</h3>
+                <h3>🎮 Interface</h3>
                 <ul>
-                    <li>⚠️ <strong>Important :</strong> Vous devez construire une <strong>Mairie</strong> avant toute chose. Sans administration, pas de ville !</li>
+                    <li><strong>☀️ Jour Suivant :</strong> Passe au jour suivant, collecte les impôts et déclenche les événements.</li>
+                    <li><strong>⏩ Auto :</strong> Le temps passe tout seul. Cliquez à nouveau pour pauser.</li>
+                    <li><strong>💾 :</strong> Sauvegarder votre progression.</li>
+                    <li><strong>🗺️ Terrain :</strong> Agrandir la zone de construction (coûte cher !).</li>
                 </ul>
-                
-                <h3>🏠 Les Bases</h3>
+                <h3>⚠️ Menaces</h3>
                 <ul>
-                    <li><strong>Résidences :</strong> Attirent la population. Nécessitent des routes connectées au bord de la carte.</li>
-                    <li><strong>Commerce & Industrie :</strong> Génèrent des revenus et fournissent des emplois.</li>
-                    <li>⚠️ <strong>Faillite Commerciale :</strong> Si vous n'avez pas assez d'habitants pour soutenir vos commerces, ils feront faillite et seront abandonnés !</li>
-                    <li><strong>Routes :</strong> Indispensables pour relier les bâtiments au reste du monde (bords de la carte).</li>
+                    <li><strong>🔥 Incendies & 💰 Vols :</strong> Construisez Casernes et Postes de Police.</li>
+                    <li><strong>🤢 Épidémies :</strong> Surviennent si vous avez beaucoup d'habitants sans Hôpital.</li>
+                    <li><strong>📉 Faillite :</strong> Les commerces ferment s'ils manquent de clients.</li>
+                    <li><strong>💣 Démolition :</strong> Rapporte 50% du prix initial.</li>
                 </ul>
-
-                <h3>😊 Bonheur & Dangers</h3>
+                <h3>💡 Astuces</h3>
                 <ul>
-                    <li>Le <strong>bonheur</strong> dépend des parcs, de la criminalité, de la santé, de l'éducation et des impôts.</li>
-                    <li>⚠️ <strong>Attention :</strong> Si le bonheur chute en dessous de <strong>20%</strong>, des <strong>émeutes</strong> éclatent !</li>
-                    <li><strong>Police, Pompiers & Hôpitaux :</strong> Protègent contre les braquages, les incendies et les maladies.</li>
-                </ul>
-
-                <h3>💰 Économie</h3>
-                <ul>
-                    <li>Gérez votre budget en ajustant les <strong>impôts</strong> (attention au bonheur !).</li>
-                    <li>Construisez des commerces pour augmenter vos revenus quotidiens.</li>
-                    <li>Attention aux coûts d'entretien de chaque bâtiment.</li>
+                    <li>La <strong>Mairie</strong> est obligatoire pour commencer.</li>
+                    <li>Suivez les quêtes du <strong>Conseiller</strong> pour gagner de l'argent facile.</li>
+                    <li>L'outil <strong>✋ Déplacer</strong> est gratuit ! Utilisez-le pour réorganiser.</li>
+                    <li>Les <strong>Écoles</strong> augmentent l'éducation, les <strong>Hôpitaux</strong> la santé et le bonheur.</li>
                 </ul>
             </div>
-            <button class="menu-btn" id="close-tutorial-btn" style="padding: 10px 30px;">Compris !</button>
+            <div style="text-align: center;">
+                <button class="menu-btn" id="close-tutorial-btn">C'est parti !</button>
+            </div>
         </div>
     </div>
     
@@ -795,11 +744,28 @@
         let gameState = {};
         let currentSaveName = null;
         let autoTurnInterval = null;
+        let winShown = false;
+        let movingBuildingIndex = null;
+
+        const QUESTS_DB = [
+            { id: 'q1', text: "Construire une Mairie", check: (s) => s.builtTypes.includes('mairie'), reward: 2000 },
+            { id: 'q2', text: "Atteindre 50 Habitants", check: (s) => s.population >= 50, reward: 3000 },
+            { id: 'q3', text: "Construire un Commerce", check: (s) => s.builtTypes.includes('commerce'), reward: 1500 },
+            { id: 'q4', text: "Construire un Poste de Police", check: (s) => s.builtTypes.includes('police'), reward: 4000 },
+            { id: 'q5', text: "Atteindre 80% Bonheur", check: (s) => s.happiness >= 80, reward: 5000 },
+            { id: 'q6', text: "Construire une École", check: (s) => s.builtTypes.includes('ecole'), reward: 3000 },
+            { id: 'q7', text: "Avoir 5000$ en banque", check: (s) => s.budget >= 5000, reward: 1000 },
+            { id: 'q8', text: "Construire un Hôpital", check: (s) => s.builtTypes.includes('hopital'), reward: 6000 },
+            { id: 'q9', text: "Atteindre 300 Habitants", check: (s) => s.population >= 300, reward: 10000 },
+            { id: 'q10', text: "Construire un Monument", check: (s) => s.builtTypes.includes('monument'), reward: 15000 }
+        ];
 
         const defaultGameState = {
             gridColumns: INITIAL_GRID_COLUMNS, gridRows: 8, selectedTool: 'residence',
-            budget: 12500, population: 0, netIncome: 0, maintenanceCost: 0, commercialIncome: 0, taxIncome: 0, taxHappinessPenalty: 0, happiness: 75, taxRate: 10,
-            buildings: [], buildingPurchaseCount: {}, activeEvents: [], landCost: 5000,
+            budget: 12500, population: 0, netIncome: 0, maintenanceCost: 0, commercialIncome: 0, taxIncome: 0, taxHappinessPenalty: 0, 
+            happiness: 75, learning: 0, taxRate: 10, difficulty: 'normal',
+            buildings: [], buildingPurchaseCount: {}, builtTypes: [], activeEvents: [], landCost: 5000,
+            completedQuests: [], currentQuestIndex: 0,
             buildingTypes: {
                 mairie: { name: 'Mairie', baseCost: 1500, population: 0, income: 0, happiness: 10, icon: '🏛️', needsRoad: true, maintenanceCost: 100, isUnique: true },
                 residence: { name: 'Résidence', baseCost: 1000, population: 50, income: 0, happiness: 3, icon: '🏠', needsRoad: true, maintenanceCost: 50 },
@@ -814,15 +780,16 @@
                 police: { name: 'Poste de Police', baseCost: 7000, icon: '🚓', needsRoad: true, maintenanceCost: 100 },
                 pompier: { name: 'Caserne de Pompier', baseCost: 7000, icon: '🚒', needsRoad: true, maintenanceCost: 100 },
                 hopital: { name: 'Hôpital', baseCost: 8000, icon: '🏥', needsRoad: true, maintenanceCost: 300, happiness: 10 },
-                ecole: { name: 'École', baseCost: 4000, icon: '🏫', needsRoad: true, maintenanceCost: 150, happiness: 5 },
+                ecole: { name: 'École', baseCost: 4000, icon: '🏫', needsRoad: true, maintenanceCost: 150, happiness: 0 },
                 parc: { name: 'Parc', baseCost: 500, population: 0, income: 0, happiness: 15, icon: '🌳', needsRoad: false, maintenanceCost: 25 },
                 route: { name: 'Route', baseCost: 100, icon: '🚧', maintenanceCost: 10 },
-                demolir: { name: 'Démolir', baseCost: 0, icon: '💣' }
+                demolir: { name: 'Démolir', baseCost: 0, icon: '💣' },
+                move: { name: 'Déplacer', baseCost: 0, icon: '✋' }
             }
         };
 
         function showScreen(screenId) {
-            ['main-menu', 'game-over-screen', 'game-interface', 'load-game-screen'].forEach(id => {
+            ['main-menu', 'game-over-screen', 'game-interface', 'load-game-screen', 'win-screen', 'difficulty-screen'].forEach(id => {
                 const element = document.getElementById(id);
                 if (element) {
                     if (id.includes('-menu') || id.includes('-screen')) {
@@ -835,14 +802,23 @@
         }
 
         function startNewGame() {
+            showScreen('difficulty-screen');
+        }
+
+        function setDifficulty(mode) {
             gameState = JSON.parse(JSON.stringify(defaultGameState));
+            gameState.difficulty = mode;
+            if (mode === 'easy') {
+                gameState.budget = 50000;
+            } else {
+                gameState.budget = 12000;
+            }
             currentSaveName = null;
+            winShown = false;
             showScreen('game-interface');
             initGameUI();
             stopAutoTurn();
-            setTimeout(() => {
-                showNotification("Construisez une Mairie pour commencer !", "info");
-            }, 500);
+            setTimeout(openTutorialModal, 200);
         }
 
         function getAllSaves() {
@@ -871,16 +847,24 @@
             const saves = getAllSaves();
             if (saves[name]) {
                 try {
-                    gameState = saves[name].gameState;
+                    const loadedState = saves[name].gameState;
+                    gameState = { ...defaultGameState, ...loadedState };
                     
-                    const defaults = JSON.parse(JSON.stringify(defaultGameState));
-                    for (let key in defaults.buildingTypes) {
+                    for (let key in defaultGameState.buildingTypes) {
                         if (!gameState.buildingTypes[key]) {
-                            gameState.buildingTypes[key] = defaults.buildingTypes[key];
+                            gameState.buildingTypes[key] = defaultGameState.buildingTypes[key];
+                        } else {
+                            gameState.buildingTypes[key] = { ...defaultGameState.buildingTypes[key], ...gameState.buildingTypes[key] };
                         }
                     }
+                    
+                    if(!gameState.builtTypes) gameState.builtTypes = [];
+                    if(gameState.learning === undefined) gameState.learning = 0;
+                    if(gameState.completedQuests === undefined) gameState.completedQuests = [];
+                    if(gameState.currentQuestIndex === undefined) gameState.currentQuestIndex = 0;
 
                     currentSaveName = name;
+                    winShown = false;
                     showScreen('game-interface');
                     initGameUI();
                     stopAutoTurn();
@@ -924,9 +908,7 @@
         function openSaveModal() {
             const modal = document.getElementById('save-modal');
             const input = document.getElementById('save-name-input');
-
             input.value = currentSaveName || `Ville ${new Date().toLocaleDateString()}`;
-            
             modal.style.display = 'flex';
             input.focus();
         }
@@ -948,11 +930,23 @@
             showScreen('game-over-screen');
         }
 
+        function checkWinCondition() {
+            if (winShown) return;
+            const allBuildingsBuilt = Object.keys(defaultGameState.buildingTypes)
+                .filter(t => t !== 'demolir' && t !== 'route' && t !== 'move')
+                .every(t => gameState.builtTypes.includes(t));
+            
+            if (gameState.happiness >= 100 && gameState.learning >= 100 && allBuildingsBuilt) {
+                winShown = true;
+                stopAutoTurn();
+                showScreen('win-screen');
+            }
+        }
+
         function initGameUI() {
             createGrid();
             redrawBuildings();
             setupGameEventListeners();
-            updateAllBuildingCosts();
             updateStatistics();
             updateUI();
         }
@@ -987,6 +981,8 @@
             });
 
             document.getElementById('restart-game-btn').addEventListener('click', startNewGame);
+            document.getElementById('continue-game-btn').addEventListener('click', () => showScreen('game-interface'));
+            
             document.getElementById('city-grid').addEventListener('click', (event) => {
                 const cell = event.target.closest('.grid-cell');
                 if (cell) {
@@ -1017,6 +1013,11 @@
                     document.querySelectorAll('.building-option').forEach(opt => opt.classList.remove('selected'));
                     option.classList.add('selected');
                     gameState.selectedTool = option.dataset.type;
+                    
+                    if (gameState.selectedTool !== 'move') {
+                        clearMoveHighlight();
+                        movingBuildingIndex = null;
+                    }
                 });
                 
                 option.addEventListener('mousemove', (e) => {
@@ -1038,13 +1039,9 @@
             taxSlider.addEventListener('input', (e) => {
                 const rate = parseInt(e.target.value);
                 gameState.taxRate = rate;
-                const percentage = (rate / taxSlider.max) * 100;
-                taxSlider.style.background = `linear-gradient(to right, var(--primary-blue) 0%, var(--primary-blue) ${percentage}%, rgba(59, 130, 246, 0.2) ${percentage}%, rgba(59, 130, 246, 0.2) 100%)`;
                 updateStatistics();
                 updateUI();
             });
-            const initialPercentage = (taxSlider.value / taxSlider.max) * 100;
-            taxSlider.style.background = `linear-gradient(to right, var(--primary-blue) 0%, var(--primary-blue) ${initialPercentage}%, rgba(59, 130, 246, 0.2) ${initialPercentage}%, rgba(59, 130, 246, 0.2) 100%)`;
         }
 
         function toggleAutoTurn() {
@@ -1109,6 +1106,7 @@
             if (data.income) content += `<div class="tooltip-row"><span class="tooltip-label">Revenus:</span> <span class="tooltip-value">+${data.income}</span></div>`;
             if (data.maintenanceCost) content += `<div class="tooltip-row"><span class="tooltip-label">Entretien:</span> <span class="tooltip-value" style="color: #ef4444">-${data.maintenanceCost}</span></div>`;
             if (data.happiness) content += `<div class="tooltip-row"><span class="tooltip-label">Bonheur:</span> <span class="tooltip-value" style="color: ${data.happiness > 0 ? '#10B981' : '#F43F5E'}">${data.happiness > 0 ? '+' : ''}${data.happiness}</span></div>`;
+            if (data.type === 'ecole') content += `<div class="tooltip-row"><span class="tooltip-label">Éducation:</span> <span class="tooltip-value" style="color: #60A5FA">+Ratio</span></div>`;
             
             tooltip.innerHTML = content;
             tooltip.style.display = 'block';
@@ -1146,20 +1144,22 @@
         
         function getCurrentBuildingCost(type) {
             const data = gameState.buildingTypes[type];
-            if (!data || ['route', 'demolir'].includes(type)) return data ? data.baseCost : 0;
+            if (!data || ['route', 'demolir', 'move'].includes(type)) return data ? data.baseCost : 0;
             return data.baseCost;
         }
 
         function updateAllBuildingCosts() {
-            for (const type in gameState.buildingTypes) {
-                const costEl = document.getElementById(`cost-${type}`);
-                if (costEl) costEl.textContent = `Coût: ${getCurrentBuildingCost(type).toLocaleString()}`;
-            }
-            document.getElementById('buy-land-text').textContent = `Acheter du terrain (${gameState.landCost.toLocaleString()})`;
+            document.getElementById('buy-land-text').textContent = `Terrain (${gameState.landCost.toLocaleString()})`;
         }
 
         function handleCellClick(index) {
             const existingBuilding = gameState.buildings.find(b => b.index === index);
+
+            if (gameState.selectedTool === 'move') {
+                handleMoveClick(index, existingBuilding);
+                return;
+            }
+
             if (gameState.selectedTool === 'demolir') {
                 if (existingBuilding) removeBuilding(existingBuilding);
                 return;
@@ -1184,6 +1184,39 @@
             build(index, gameState.selectedTool, cost);
         }
 
+        function handleMoveClick(index, existingBuilding) {
+            if (movingBuildingIndex === null) {
+                if (!existingBuilding) {
+                    showNotification("Sélectionnez un bâtiment à déplacer.", "error");
+                    return;
+                }
+                movingBuildingIndex = index;
+                document.querySelector(`.grid-cell[data-index="${index}"]`).classList.add('move-highlight');
+                showNotification("Sélectionnez la nouvelle case.", "info");
+            } else {
+                if (existingBuilding) {
+                    showNotification("Case occupée !", "error");
+                    clearMoveHighlight();
+                    movingBuildingIndex = null;
+                    return;
+                }
+                
+                const originalBuilding = gameState.buildings.find(b => b.index === movingBuildingIndex);
+                if (originalBuilding) {
+                    originalBuilding.index = index;
+                    redrawBuildings();
+                    updateStatistics();
+                    showNotification("Bâtiment déplacé !", "success");
+                }
+                clearMoveHighlight();
+                movingBuildingIndex = null;
+            }
+        }
+
+        function clearMoveHighlight() {
+            document.querySelectorAll('.move-highlight').forEach(el => el.classList.remove('move-highlight'));
+        }
+
         function updateCell(index, building = null) {
             const cell = document.querySelector(`.grid-cell[data-index="${index}"]`);
             if (!cell) return;
@@ -1194,7 +1227,10 @@
 
                 const event = gameState.activeEvents.find(e => e.buildingIndex === index);
                 if (event) {
-                    buildingHTML += `<div class="event-overlay">${event.type === 'fire' ? '🔥' : '💰'}</div>`;
+                    let icon = '💰';
+                    if (event.type === 'fire') icon = '🔥';
+                    if (event.type === 'sickness') icon = '🤢';
+                    buildingHTML += `<div class="event-overlay">${icon}</div>`;
                 }
                 cell.innerHTML = buildingHTML;
             } else {
@@ -1204,8 +1240,9 @@
         
         function build(index, type, cost) {
             gameState.budget -= cost;
-            if (!['route', 'demolir'].includes(type)) {
+            if (!['route', 'demolir', 'move'].includes(type)) {
                 gameState.buildingPurchaseCount[type] = (gameState.buildingPurchaseCount[type] || 0) + 1;
+                if (!gameState.builtTypes.includes(type)) gameState.builtTypes.push(type);
             }
             const newBuilding = { type, index, isActive: false };
             gameState.buildings.push(newBuilding);
@@ -1216,16 +1253,22 @@
             
             updateAllBuildingCosts();
             updateUI();
+            checkWinCondition();
+            checkQuests();
             showNotification(`${gameState.buildingTypes[type].name} construit !`, 'success');
         }
         
         function removeBuilding(buildingToRemove, isEvent = false) {
-            if (!isEvent) gameState.budget += getCurrentBuildingCost(buildingToRemove.type) / 4;
+            if (!isEvent) {
+                const refund = Math.floor(getCurrentBuildingCost(buildingToRemove.type) * 0.5);
+                gameState.budget += refund;
+                showNotification(`Bâtiment démoli (+${refund}$)`, 'info');
+            } else {
+                showNotification('Bâtiment détruit !', 'error');
+            }
             
             updateCell(buildingToRemove.index, null);
             gameState.buildings = gameState.buildings.filter(b => b.index !== buildingToRemove.index);
-
-            if (!isEvent) showNotification('Bâtiment démoli.', 'info');
             
             const buildingsToUpdate = updateStatistics();
             buildingsToUpdate.forEach(b => updateCell(b.index, b));
@@ -1306,35 +1349,57 @@
             return adjacentRoads.some(road => isRoadConnectedToEdge(road.index));
         }
 
+        function checkQuests() {
+            if (gameState.currentQuestIndex >= QUESTS_DB.length) {
+                document.getElementById('quest-display').innerHTML = '<div class="quest-desc">Toutes les quêtes sont terminées !</div>';
+                return;
+            }
+
+            const currentQuest = QUESTS_DB[gameState.currentQuestIndex];
+            if (currentQuest.check(gameState)) {
+                gameState.budget += currentQuest.reward;
+                showNotification(`Quête accomplie ! +${currentQuest.reward}$`, 'success');
+                gameState.completedQuests.push(currentQuest.id);
+                gameState.currentQuestIndex++;
+                updateUI();
+            }
+        }
+
         function handleEvents() {
             const buildingsToUpdate = new Set();
             let policePower = gameState.buildings.filter(b => b.type === 'police' && b.isActive).length;
             let firePower = gameState.buildings.filter(b => b.type === 'pompier' && b.isActive).length;
+            let hospitalPower = gameState.buildings.filter(b => b.type === 'hopital' && b.isActive).length;
 
             gameState.activeEvents.forEach(event => {
                 if (event.type === 'fire' && firePower-- > 0) event.handled = true;
                 if (event.type === 'robbery' && policePower-- > 0) event.handled = true;
+                if (event.type === 'sickness' && hospitalPower-- > 0) event.handled = true;
                 event.turnsLeft--;
             });
 
             gameState.activeEvents = gameState.activeEvents.filter(event => {
                 const targetBuilding = gameState.buildings.find(b => b.index === event.buildingIndex);
                 if (event.handled) { 
-                    showNotification(`Un ${event.type === 'fire' ? 'incendie' : 'braquage'} a été maîtrisé !`, 'success'); 
+                    showNotification(`Menace (${event.type}) gérée !`, 'success'); 
                     if(targetBuilding) buildingsToUpdate.add(targetBuilding);
                     return false; 
                 }
                 if (event.turnsLeft <= 0) {
                     if (targetBuilding) {
                         if (event.type === 'fire') {
-                            showNotification(`Un bâtiment a brûlé ! Bonheur -25`, 'error');
+                            showNotification(`Incendie destructeur !`, 'error');
                             removeBuilding(targetBuilding, true);
-                            gameState.happiness -= 25;
+                            gameState.happiness -= 20;
                         } else if (event.type === 'robbery') {
-                            const loss = 5000;
+                            const loss = 3000;
                             gameState.budget -= loss;
-                            showNotification(`Braquage réussi ! Perte: ${loss.toLocaleString()}`, 'error');
+                            showNotification(`Vol: -${loss}$`, 'error');
                             buildingsToUpdate.add(targetBuilding);
+                        } else if (event.type === 'sickness') {
+                            showNotification(`Épidémie ! Population décimée.`, 'error');
+                            buildingsToUpdate.add(targetBuilding);
+                            gameState.happiness -= 15;
                         }
                     }
                     return false;
@@ -1342,37 +1407,42 @@
                 return true;
             });
 
-            if (Math.random() < 0.1) {
-                const type = Math.random() < 0.5 ? 'fire' : 'robbery';
-                const targets = gameState.buildings.filter(b => (type === 'fire' && ['residence', 'commerce', 'industrie', 'grand-commerce', 'bureau', 'cinema', 'hopital', 'ecole', 'mairie', 'musee'].includes(b.type)) || (type === 'robbery' && ['commerce', 'grand-commerce', 'cinema'].includes(b.type)));
+            let eventChance = gameState.difficulty === 'easy' ? 0.03 : 0.08;
+            if (Math.random() < eventChance) {
+                let types = ['fire', 'robbery'];
+                // Disease logic: needs population
+                if (gameState.population > 100 && gameState.buildings.filter(b => b.type === 'hopital' && b.isActive).length === 0) {
+                    types.push('sickness');
+                }
+
+                const type = types[Math.floor(Math.random() * types.length)];
+                
+                let targetTypes = [];
+                if (type === 'fire') targetTypes = ['residence', 'commerce', 'industrie', 'grand-commerce', 'bureau', 'cinema', 'ecole', 'mairie'];
+                if (type === 'robbery') targetTypes = ['commerce', 'grand-commerce', 'cinema', 'bureau'];
+                if (type === 'sickness') targetTypes = ['residence', 'grande-residence'];
+
+                const targets = gameState.buildings.filter(b => targetTypes.includes(b.type));
+                
                 if (targets.length > 0) {
                     const target = targets[Math.floor(Math.random() * targets.length)];
                     if(!gameState.activeEvents.some(e => e.buildingIndex === target.index)) {
                         gameState.activeEvents.push({ type, buildingIndex: target.index, turnsLeft: 3 });
                         buildingsToUpdate.add(target);
+                        let msg = type === 'fire' ? "Au feu !" : type === 'robbery' ? "Au voleur !" : "Maladie détectée !";
+                        showNotification(msg, 'error');
                     }
                 }
             }
 
             if (gameState.happiness < 20) {
-                if (Math.random() < 0.3) {
-                    const targets = gameState.buildings.filter(b => ['residence', 'commerce', 'industrie', 'grand-commerce'].includes(b.type));
+                if (Math.random() < 0.2) {
+                    const targets = gameState.buildings.filter(b => ['residence', 'commerce', 'industrie'].includes(b.type));
                     if (targets.length > 0) {
                         const target = targets[Math.floor(Math.random() * targets.length)];
-                        if(!gameState.activeEvents.some(e => e.buildingIndex === target.index)) {
-                            gameState.activeEvents.push({ type: 'fire', buildingIndex: target.index, turnsLeft: 2 });
-                            buildingsToUpdate.add(target);
-                            showNotification("ÉMEUTE ! Les habitants mettent le feu !", "error");
-                        }
-                    }
-                }
-
-                if (Math.random() < 0.3) {
-                    const residences = gameState.buildings.filter(b => ['residence', 'grande-residence'].includes(b.type));
-                    if (residences.length > 0) {
-                        const target = residences[Math.floor(Math.random() * residences.length)];
-                        removeBuilding(target, true);
-                        showNotification("EXODE ! Les habitants fuient la ville !", "error");
+                        gameState.activeEvents.push({ type: 'fire', buildingIndex: target.index, turnsLeft: 2 });
+                        buildingsToUpdate.add(target);
+                        showNotification("ÉMEUTE !", "error");
                     }
                 }
             }
@@ -1389,14 +1459,10 @@
             commerceBuildings.forEach(b => {
                 const required = gameState.buildingTypes[b.type].requiredPop || 0;
                 if (gameState.population < required) {
-                    if (Math.random() < 0.1) {
+                    if (Math.random() < 0.05) {
                         removeBuilding(b, true);
-                        showNotification("Faillite ! Un commerce ferme faute de clients.", "error");
-                    } else if (!b.isBankruptWarning) {
-                        b.isBankruptWarning = true;
+                        showNotification("Faillite commerce.", "error");
                     }
-                } else {
-                    b.isBankruptWarning = false;
                 }
             });
         }
@@ -1404,6 +1470,8 @@
         function updateStatistics() {
             const buildingsToUpdate = new Set();
             let totalPopulation = 0, totalCommercialIncome = 0, totalMaintenance = 0, happinessFromBuildings = 0, adjacentHappiness = 0;
+            let activeSchools = 0;
+            let activeHospitals = 0;
 
             gameState.buildings.forEach(b => {
                 const wasActive = b.isActive;
@@ -1418,26 +1486,27 @@
 
                 const data = gameState.buildingTypes[b.type];
 
-                if (b.isActive && data.population) totalPopulation += data.population;
-                
-                if (b.isActive && data.income) {
-                    if (data.requiredPop && totalPopulation < data.requiredPop) {
-                       
-                    } else {
-                        totalCommercialIncome += data.income;
-                    }
+                if (b.isActive) {
+                    if (data.population) totalPopulation += data.population;
+                    if (data.income) totalCommercialIncome += data.income;
+                    if (data.happiness) happinessFromBuildings += data.happiness;
+                    if (b.type === 'ecole') activeSchools++;
+                    if (b.type === 'hopital') activeHospitals++;
                 }
 
                 if (data.maintenanceCost) totalMaintenance += data.maintenanceCost;
 
-                if (b.isActive && data.happiness) happinessFromBuildings += data.happiness;
-
-                if (b.isActive && ['residence', 'grande-residence'].includes(b.type) && getAdjacentIndices(b.index).some(i => gameState.buildings.find(bld => bld.index === i && bld.type === 'monument' && bld.isActive))) {
-                    adjacentHappiness += 15;
+                if (b.isActive && ['residence', 'grande-residence'].includes(b.type)) {
+                    if (getAdjacentIndices(b.index).some(i => gameState.buildings.find(bld => bld.index === i && bld.type === 'monument' && bld.isActive))) {
+                        adjacentHappiness += 15;
+                    }
+                    if (gameState.activeEvents.some(e => e.buildingIndex === b.index && e.type === 'sickness')) {
+                         totalPopulation -= Math.floor(data.population * 0.5); 
+                    }
                 }
             });
 
-            gameState.population = totalPopulation;
+            gameState.population = Math.max(0, totalPopulation);
             gameState.commercialIncome = totalCommercialIncome;
             gameState.taxIncome = Math.floor(gameState.population * (gameState.taxRate / 5));
             gameState.maintenanceCost = totalMaintenance;
@@ -1447,14 +1516,21 @@
             gameState.happiness = (50 - Math.floor(gameState.population / 500)) + happinessFromBuildings + adjacentHappiness - gameState.taxHappinessPenalty;
             gameState.happiness = Math.max(0, Math.min(100, gameState.happiness));
             
+            if (gameState.population === 0) {
+                gameState.learning = 0;
+            } else {
+                const schoolCapacity = 500;
+                gameState.learning = Math.floor((activeSchools * schoolCapacity / gameState.population) * 100);
+                gameState.learning = Math.min(100, gameState.learning);
+            }
+
             return Array.from(buildingsToUpdate);
         }
 
         function nextTurn() {
-            if(gameState.budget < 0) { showNotification("Le jeu est en faillite, commencez une nouvelle partie !", 'error'); return; }
+            if(gameState.budget < 0) { showNotification("Faillite !", 'error'); return; }
             
             const eventBuildingsToUpdate = handleEvents();
-            
             checkCommerceBankruptcy(eventBuildingsToUpdate);
 
             gameState.budget += gameState.netIncome;
@@ -1462,34 +1538,43 @@
             if(gameState.budget < 0) { gameOver(); return; }
             
             const statBuildingsToUpdate = updateStatistics();
-            
             const allBuildingsToUpdate = [...new Set([...eventBuildingsToUpdate, ...statBuildingsToUpdate])];
             allBuildingsToUpdate.forEach(b => updateCell(b.index, b));
             
+            checkQuests();
             updateUI();
-            showNotification(`Revenus nets: ${gameState.netIncome.toLocaleString()}`, gameState.netIncome >= 0 ? 'success' : 'error');
+            checkWinCondition();
+            showNotification(`Revenus nets: ${gameState.netIncome > 0 ? '+' : ''}${gameState.netIncome}`, gameState.netIncome >= 0 ? 'success' : 'error');
         }
 
         function updateUI() {
             document.getElementById('population').textContent = gameState.population.toLocaleString();
             document.getElementById('budget').textContent = Math.floor(gameState.budget).toLocaleString();
-            document.getElementById('tax-income').textContent = gameState.taxIncome.toLocaleString();
             document.getElementById('net-income').textContent = gameState.netIncome.toLocaleString();
             
             const happiness = Math.floor(gameState.happiness);
             document.getElementById('happiness-value').textContent = `${happiness}%`;
-            const happinessIcon = document.getElementById('happiness-icon');
-            if (happiness >= 75) { happinessIcon.textContent = '😄'; happinessIcon.style.color = '#10B981'; }
-            else if (happiness >= 50) { happinessIcon.textContent = '😊'; happinessIcon.style.color = '#FBBF24'; }
-            else if (happiness >= 25) { happinessIcon.textContent = '😟'; happinessIcon.style.color = '#F97316'; }
-            else { happinessIcon.textContent = '😡'; happinessIcon.style.color = '#EF4444'; }
             
+            const learning = Math.floor(gameState.learning);
+            document.getElementById('learning-value').textContent = `${learning}%`;
+
             document.getElementById('tax-rate-display').textContent = `${gameState.taxRate}%`;
             document.getElementById('large-residence-option').classList.toggle('hidden-building', gameState.happiness < gameState.buildingTypes['grande-residence'].unlockHappiness);
             document.getElementById('monument-option').classList.toggle('hidden-building', gameState.happiness < gameState.buildingTypes.monument.unlockHappiness);
             document.getElementById('grand-commerce-option').classList.toggle('hidden-building', gameState.happiness < gameState.buildingTypes['grand-commerce'].unlockHappiness);
             document.getElementById('cinema-option').classList.toggle('hidden-building', gameState.happiness < gameState.buildingTypes.cinema.unlockHappiness);
             document.getElementById('musee-option').classList.toggle('hidden-building', gameState.happiness < gameState.buildingTypes.musee.unlockHappiness);
+
+            const questDiv = document.getElementById('quest-display');
+            if (gameState.currentQuestIndex < QUESTS_DB.length) {
+                const q = QUESTS_DB[gameState.currentQuestIndex];
+                questDiv.innerHTML = `
+                    <div class="quest-desc">${q.text}</div>
+                    <div class="quest-reward">Récompense: ${q.reward}$</div>
+                `;
+            } else {
+                questDiv.innerHTML = `<div class="quest-desc">Toutes les quêtes terminées !</div>`;
+            }
         }
 
         function showNotification(message, type) {
@@ -1504,9 +1589,10 @@
         }
 
         window.addEventListener('DOMContentLoaded', setupAllEventListeners);
-
         window.loadSaveByName = loadSaveByName;
         window.deleteSave = deleteSave;
+        window.setDifficulty = setDifficulty;
+        window.showScreen = showScreen;
     </script>
 </body>
-</html>    
+</html>
